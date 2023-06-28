@@ -2,7 +2,7 @@ import torch
 from torchvision.models import vgg16_bn
 import torch.nn as nn
 
-from models.utils import initialize_weights
+from utils import initialize_weights
 
 def build_vgg(pretrained=True, freeze=False):
     model = vgg16_bn()

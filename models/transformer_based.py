@@ -1,10 +1,11 @@
 import torch
 import torch.nn as nn
 
-from models.vgg_frontend import build_vgg
-from models.linear import LinearModel
-from models.dil_conv_block import build_dc
-from models.utils import initialize_weights
+from vgg_frontend import build_vgg
+from linear import LinearModel
+from dil_conv_block import build_dc
+from utils import initialize_weights
+from transformer import Transformer
 
 class RelScaleTransformer(nn.Module):
     def __init__(self, pretrained=False, freeze_bb=True) -> None:
@@ -32,9 +33,10 @@ class RelScaleTransformer(nn.Module):
         input_catted = torch.cat((x1, x2), dim=1)
 
         input_catted = input_catted.view(-1, 1, 1024)
-
+        print(input_catted.shape)
         out = self.transformer(input_catted, input_catted)
         out = out.view(-1, 8192)
+        print(out.shape)
 
         out = torch.flatten(out, start_dim=1)
         out = self.lin(out)
@@ -48,12 +50,12 @@ def build_relscaletransformer(pretrained=False):
         model.load_state_dict(checkpoint['model_state_dict'])
     return model
 
-#a = torch.rand(4, 3, 512, 512)
-#b = torch.rand(4, 3, 512, 512)
+# a = torch.rand(4, 3, 512, 512)
+# b = torch.rand(4, 3, 512, 512)
 
-#model = RelScaleTransformer()
-#r = model(a, b)
-#print(r.shape)
+# model = RelScaleTransformer()
+# r = model(a, b)
+# print(r.shape)
 #params_count_lite(model)
 #print(b.shape)
 #params_count_lite(model.transformer)

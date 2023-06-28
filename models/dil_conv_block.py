@@ -1,14 +1,14 @@
 import torch
 import torch.nn as nn
 
-from models.utils import initialize_weights
+from utils import initialize_weights
 
-def make_layers(cfg, in_channels = 3,batch_norm=True, dilation = True, d=2):
+def make_layers(cfg, in_channels = 3,batch_norm=True, dilation = 2):
     '''
     example of config => [512, 512, 512, 256, 256, 128 ,64, 64, 32, 16]
     '''
     if dilation:
-        d_rate = d
+        d_rate = dilation
     else:
         d_rate = 1
     layers = []

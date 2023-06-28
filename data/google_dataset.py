@@ -77,6 +77,44 @@ class GoogleDataset_entire_image(Dataset):
         
         return image1, image2, scale
 
+class GoogleMapDataset(Dataset):
+
+    def __init__(self, \
+            data_path='/home/user/Datasets/map/',\
+            pairs_path = '/home/user/Datasets/pairs.txt',
+            transform=None) -> None:
+        super().__init__()
+        print(f'BUILDING GOOGLE DATASET')
+        self.transform = transform
+        self.data_path = data_path
+        self.pairs_path = pairs_path
+        
+        self.pairs_file = open(self.pairs_path, 'r')
+        self.pairs = self.pairs_file.readlines()
+
+        self.scale_dataset = []
+        for item in self.pairs:
+            item_info = item.split(' ')
+            self.scale_dataset.append([item_info[0], item_info[1], item_info[-1]])
+        random.shuffle(self.scale_dataset)
+
+
+    def __len__(self):
+        return len(self.scale_dataset)
+
+    def __getitem__(self, index):
+        item = self.scale_dataset[index]
+        image1_path = os.path.join(self.data_path, item[0])
+        image2_path = os.path.join(self.data_path, item[1])
+        scale = item[-1]
+
+        image1, image2 = image_processing(img1_path=image1_path,
+                                        img2_path=image2_path, 
+                                        image_transforms=self.transform, 
+                                        device='cuda')
+        
+        return image1, image2, scale
+
 
 def create_google_dataloaders(train_set, val_set, batch_size):
     '''
